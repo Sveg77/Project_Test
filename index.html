@@ -4,34 +4,285 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Генератор идей для постов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-deep: #0c0e12;
+      --text: #f2ece6;
+      --text-soft: rgba(242, 236, 230, 0.72);
+      --accent: #e07a5f;
+      --accent-glow: rgba(224, 122, 95, 0.45);
+      --surface: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.1);
+      --blob-1: #3d2a4a;
+      --blob-2: #1e3d3a;
+      --blob-3: #4a3028;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      max-width: 36rem;
-      margin: 2rem auto;
-      padding: 0 1.25rem;
-      line-height: 1.5;
-      color: #1a1a1a;
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-optical-sizing: auto;
+      color: var(--text);
+      line-height: 1.55;
+      background: var(--bg-deep);
+      overflow-x: hidden;
     }
+
+    /* Анимированный фон */
+    .bg-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      animation: floatBlob 18s ease-in-out infinite;
+    }
+
+    .blob:nth-child(1) {
+      width: min(55vw, 420px);
+      height: min(55vw, 420px);
+      background: var(--blob-1);
+      top: -12%;
+      left: -8%;
+      animation-delay: 0s;
+    }
+
+    .blob:nth-child(2) {
+      width: min(50vw, 380px);
+      height: min(50vw, 380px);
+      background: var(--blob-2);
+      bottom: -15%;
+      right: -10%;
+      animation-delay: -6s;
+    }
+
+    .blob:nth-child(3) {
+      width: min(40vw, 300px);
+      height: min(40vw, 300px);
+      background: var(--blob-3);
+      top: 42%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: -12s;
+    }
+
+    @keyframes floatBlob {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      33% {
+        transform: translate(6%, 4%) scale(1.08);
+      }
+      66% {
+        transform: translate(-5%, 6%) scale(0.95);
+      }
+    }
+
+    .blob:nth-child(3) {
+      animation-name: floatBlobCenter;
+    }
+
+    @keyframes floatBlobCenter {
+      0%, 100% {
+        transform: translate(-50%, 0) scale(1);
+      }
+      50% {
+        transform: translate(-48%, -8%) scale(1.12);
+      }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .card {
+      width: min(100%, 26rem);
+      padding: clamp(1.75rem, 5vw, 2.5rem);
+      border-radius: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      animation: cardIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     h1 {
-      font-size: 1.5rem;
+      font-family: "Fraunces", Georgia, serif;
       font-weight: 600;
-      margin-bottom: 1rem;
+      font-size: clamp(1.45rem, 4vw, 1.85rem);
+      line-height: 1.25;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+      animation: titleIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+      opacity: 0;
     }
+
+    @keyframes titleIn {
+      from {
+        opacity: 0;
+        transform: translateX(-12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .accent-line {
+      height: 3px;
+      width: 0;
+      max-width: 4.5rem;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin-bottom: 1.5rem;
+      animation: lineGrow 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+    }
+
+    @keyframes lineGrow {
+      to {
+        width: 100%;
+      }
+    }
+
     ul {
-      padding-left: 1.25rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
     }
+
     li {
-      margin-bottom: 0.5rem;
+      position: relative;
+      padding: 0.95rem 1rem 0.95rem 1.15rem;
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-soft);
+      font-size: 0.98rem;
+      font-weight: 500;
+      transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        color 0.35s ease;
+      animation: itemIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    li:nth-child(1) { animation-delay: 0.55s; }
+    li:nth-child(2) { animation-delay: 0.7s; }
+    li:nth-child(3) { animation-delay: 0.85s; }
+
+    @keyframes itemIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      border-radius: 0 2px 2px 0;
+      background: var(--accent);
+      transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    li:hover {
+      transform: translateX(6px);
+      border-color: rgba(224, 122, 95, 0.35);
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 24px var(--accent-glow);
+    }
+
+    li:hover::before {
+      height: 60%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob,
+      .card,
+      h1,
+      .accent-line,
+      li {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      .accent-line {
+        width: 4.5rem;
+      }
+
+      li:hover {
+        transform: none;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Генератор идей для постов</h1>
-  <ul>
-    <li>5 идей для постов экспертов</li>
-    <li>3 идеи сториз на сегодня</li>
-    <li>контент-план на неделю</li>
-  </ul>
+  <div class="bg-stage" aria-hidden="true">
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+  <div class="wrap">
+    <main class="card">
+      <h1>Генератор идей для постов</h1>
+      <div class="accent-line" aria-hidden="true"></div>
+      <ul>
+        <li>5 идей для постов экспертов</li>
+        <li>3 идеи сториз на сегодня</li>
+        <li>контент-план на неделю</li>
+      </ul>
+    </main>
+  </div>
 </body>
 </html>
